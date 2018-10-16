@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 //* Get the chord names for every
@@ -15,6 +14,11 @@ import './App.css';
 // * If every other note for 3 or 4 notes matches a tone 
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+  }
   render() {
     
     //create the intervals
@@ -45,6 +49,9 @@ class App extends Component {
     const root = 0
     const major = [root, whole, whole, half, whole, whole, whole, half];
     const minor = [root, whole, half, whole, whole, half, whole, whole] 
+    const melodicMinor = [root, whole, half, whole, whole, whole, whole, half]
+    const harmonicMinor = [root, whole, half, whole, whole, half, wholeHalf, half]
+
     
     // create a function that stores the result each consecutive array item added together.
     // ex [0,2,2,1] => [0,2,3,5]
@@ -64,10 +71,7 @@ class App extends Component {
     // where the keys of chromaticIntervals match the values of 
     // create an array with values in chromaticIntervals
     let chromaticKeys = Object.keys(chromatic)
-    let chromaticValues = Object.keys(chromatic)
-
-
-    var filteredScales = (scale) => {
+    var filteredScale = (scale) => {
       let reducedScale = reduceScale(scale)
       let arr = []
       for (let i = 0; i < chromaticKeys.length; i++) {
@@ -77,20 +81,36 @@ class App extends Component {
           }
         }
       }
-      return arr.join(' - ')
+      return arr
     }
 
     // create a function that takes your scale and generates all the modes by create an array of the scale with all available starting indexes.
     
+    const modeGenerator = (scale) => {
+      let result = filteredScale(scale)
+      console.log(result)
+      let arr = []
+      for (let i = 0; i < result.length; i++) {
+        let first = result.slice(0, i)
+        let last = result.slice(i, result.length - 1)
+
+        arr.push(last.concat(first))
+      }
+
+      return arr
+      
+    }
     
+    console.log(modeGenerator(minor))
     //create a function that prints triads
       //make an array that contains groups of three degrees
       //add to array by pushing degrees one at a time.
     
     // create a function that prints seventh chords
     
-    let join = (x) => Object.values(x).join(' - ')
     
+    //should be able to select scale degrees from a 8 input menu.
+
     return (          
       <div className="App">
         <header className="App-header">
@@ -99,12 +119,21 @@ class App extends Component {
           </header>
           <div>
             <h1>Major</h1>
-            {filteredScales(major)}
+            {filteredScale(major)}
           </div>
           <div>
             <h1>Minor</h1>
-            {filteredScales(minor)}
+            {filteredScale(minor)}
           </div>
+          <div>
+            <h1>Melodic Minor</h1>
+            {filteredScale(melodicMinor).join(' - ')}
+          </div>
+          <div>
+            <h1>Harmonic Minor</h1>
+            {filteredScale(harmonicMinor)}
+          </div>
+
         </header> 
       </div>
     );
