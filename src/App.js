@@ -1,18 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
 
-//* Get the chord names for every
-// * Triad object:
-// * major = [1,3,5]
-// * Seventh chord object. 
-// * ‘major 7th’ = [1,3,5,7]
-// * If chord is unrecognized print ‘'undefined' '
-// * Based on a numerical system
-// * Stored in an array
-// * 1 b2 2 b3 3 4 b5 5 b6 6 b7 7
-// * Create a function to compare the chords provided to the 7 notes selected from the scale. 
-// * If every other note for 3 or 4 notes matches a tone 
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -29,7 +17,7 @@ class App extends Component {
       3: "b3",
       4: "3",
       5: "4",
-      6: "b5",
+      6: "#4",
       7: "5",
       8: "b6",
       9: "6",
@@ -37,6 +25,9 @@ class App extends Component {
       11: "7",
       12: "8",
     };
+
+    
+    let chromaticKeys = Object.keys(chromatic)
 
     // return the scale based on tones
     // ex from 1 to 3 is a whole tone.
@@ -48,7 +39,7 @@ class App extends Component {
     const half = 1
     const root = 0
     const major = [root, whole, whole, half, whole, whole, whole, half];
-    const minor = [root, whole, half, whole, whole, half, whole, whole] 
+    // const minor = [root, whole, half, whole, whole, half, whole, whole] 
     const melodicMinor = [root, whole, half, whole, whole, whole, whole, half]
     const harmonicMinor = [root, whole, half, whole, whole, half, wholeHalf, half]
 
@@ -70,11 +61,14 @@ class App extends Component {
 
     // where the keys of chromaticIntervals match the values of 
     // create an array with values in chromaticIntervals
-    let chromaticKeys = Object.keys(chromatic)
+
+    //turn the scale degrees to chromatic values
     var filteredScale = (scale) => {
       let reducedScale = reduceScale(scale)
       let arr = []
+      //from 0 - 12
       for (let i = 0; i < chromaticKeys.length; i++) {
+        //from start of reduced scale < end
         for(let j = 0; j < reducedScale.length; j++) {
           if (i === reducedScale[j]) {
             arr.push(chromatic[i])
@@ -84,33 +78,59 @@ class App extends Component {
       return arr
     }
 
-    // create a function that takes your scale and generates all the modes by create an array of the scale with all available starting indexes.
-    
-    const modeGenerator = (scale) => {
-      let result = filteredScale(scale)
-      console.log(result)
+    var filteredMode = (mode) => {
+      let reducedMode = reduceScale(mode)
       let arr = []
-      for (let i = 0; i < result.length; i++) {
-        let first = result.slice(0, i)
-        let last = result.slice(i, result.length - 1)
-
+      //from 0 - 12
+      for (let i = 0; i < chromaticKeys.length; i++) {
+        //from start of reduced scale < end
+        for(let j = 0; j < reducedMode.length; j++) {
+          if (i === reducedMode[j]) {
+            arr.push(chromatic[i])
+          }
+        }
+      }
+      return arr
+    }
+    
+    // create a function that takes your scale and generates all the modes by create an array of the scale with all available starting indexes.
+    const modeGenerator = (scale) => {
+      let arr = []
+      for (let i = 1; i < scale.length - 1; i++) {
+        let first = scale.slice(0, i)
+        let last = scale.slice(i, scale.length)
         arr.push(last.concat(first))
       }
 
-      return arr
-      
-    }
-    
-    console.log(modeGenerator(minor))
+      return arr.map((value, key) => {
+        let arr = []
+        for (let i of value) {
+          if (i === 0) {
+            arr.unshift(i)
+          } else {
+            arr.push(i)
+          }
+        }
+        console.log(arr)
+        return (
+          <div key={key}>
+            <ol>{filteredMode(arr).join(' - ')}</ol>
+          </div>
+        )
+      })
     //create a function that prints triads
       //make an array that contains groups of three degrees
       //add to array by pushing degrees one at a time.
+      
+      // create a function that prints seventh chords
+      
+      
+      
+    }
     
-    // create a function that prints seventh chords
     
     
     //should be able to select scale degrees from a 8 input menu.
-
     return (          
       <div className="App">
         <header className="App-header">
@@ -119,19 +139,24 @@ class App extends Component {
           </header>
           <div>
             <h1>Major</h1>
-            {filteredScale(major)}
-          </div>
-          <div>
-            <h1>Minor</h1>
-            {filteredScale(minor)}
+            {filteredScale(major).join(' - ')}
+            <h2>Modes:</h2>
+            {modeGenerator(major)}
+
           </div>
           <div>
             <h1>Melodic Minor</h1>
             {filteredScale(melodicMinor).join(' - ')}
+            <h2>Modes:</h2>
+            {modeGenerator(melodicMinor)}
+
           </div>
           <div>
             <h1>Harmonic Minor</h1>
-            {filteredScale(harmonicMinor)}
+            {filteredScale(harmonicMinor).join(' - ')}
+            <h2>Modes:</h2>
+            {modeGenerator(harmonicMinor)}
+
           </div>
 
         </header> 
