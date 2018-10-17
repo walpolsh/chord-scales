@@ -39,7 +39,7 @@ class App extends Component {
     const half = 1
     const root = 0
     const major = [root, whole, whole, half, whole, whole, whole, half];
-    // const minor = [root, whole, half, whole, whole, half, whole, whole] 
+    const minor = [root, whole, half, whole, whole, half, whole, whole] 
     const melodicMinor = [root, whole, half, whole, whole, whole, whole, half]
     const harmonicMinor = [root, whole, half, whole, whole, half, wholeHalf, half]
 
@@ -61,7 +61,6 @@ class App extends Component {
 
     // where the keys of chromaticIntervals match the values of 
     // create an array with values in chromaticIntervals
-
     //turn the scale degrees to chromatic values
     var filteredScale = (scale) => {
       let reducedScale = reduceScale(scale)
@@ -93,7 +92,7 @@ class App extends Component {
       return arr
     }
     
-    // create a function that takes your scale and generates all the modes by create an array of the scale with all available starting indexes.
+    // create a function that takes your scale and generates all the modes with an array of the scale with all available starting indexes.
     const modeGenerator = (scale) => {
       let arr = []
       for (let i = 1; i < scale.length - 1; i++) {
@@ -101,7 +100,6 @@ class App extends Component {
         let last = scale.slice(i, scale.length)
         arr.push(last.concat(first))
       }
-
       return arr.map((value, key) => {
         let arr = []
         for (let i of value) {
@@ -111,14 +109,25 @@ class App extends Component {
             arr.push(i)
           }
         }
-        console.log(arr)
+        var filtered = filteredMode(arr)
+          if(filtered.includes('4') && filtered.includes('#4')) {
+            filtered.splice(filtered.indexOf('#4'), 1, '5')
+          } 
+          if(filtered.includes('b3') && filtered.includes('3')) {
+            filtered.splice(filtered.indexOf('b3'), 1, '2')
+          }         
+          if(filtered.includes('b6') && filtered.includes('6')) {
+            filtered.splice(filtered.indexOf('b6'), 1, '5')
+          }
         return (
           <div key={key}>
-            <ol>{filteredMode(arr).join(' - ')}</ol>
+            <ol>{filtered.join(' - ')}</ol>
           </div>
         )
       })
-    //create a function that prints triads
+
+      //if dupicate tones then replace tone.
+      //create a function that prints triads
       //make an array that contains groups of three degrees
       //add to array by pushing degrees one at a time.
       
@@ -128,7 +137,7 @@ class App extends Component {
       
     }
     
-    
+    let test = modeGenerator(major)    
     
     //should be able to select scale degrees from a 8 input menu.
     return (          
@@ -138,23 +147,22 @@ class App extends Component {
             Chord Scales
           </header>
           <div>
-            <h1>Major</h1>
-            {filteredScale(major).join(' - ')}
-            <h2>Modes:</h2>
+            <h1>Major Modes:</h1>
             {modeGenerator(major)}
 
           </div>
           <div>
-            <h1>Melodic Minor</h1>
-            {filteredScale(melodicMinor).join(' - ')}
-            <h2>Modes:</h2>
+            <h1>Minor Modes:</h1>
+            {modeGenerator(minor)}
+
+          </div>
+          <div>
+            <h1>Melodic Minor Modes:</h1>
             {modeGenerator(melodicMinor)}
 
           </div>
           <div>
-            <h1>Harmonic Minor</h1>
-            {filteredScale(harmonicMinor).join(' - ')}
-            <h2>Modes:</h2>
+            <h1>Harmonic Minor Modes:</h1>
             {modeGenerator(harmonicMinor)}
 
           </div>
