@@ -11,7 +11,28 @@ const triads = (scale) => {
     [scale[5], scale[0], scale[2]],
     [scale[6], scale[1], scale[3]]
   ]
-  return arr.join(' - ')
+  return arr.map((item, key )=> 
+      <div>
+        <ul key={key}>{item.join(' - ')}</ul>
+      </div>
+  )
+}
+
+const sevenths = (scale) => {
+  let arr = [
+    [scale[0], scale[2], scale[4], scale[6]],
+    [scale[1], scale[3], scale[5], scale[0]],
+    [scale[2], scale[4], scale[6], scale[1]],
+    [scale[3], scale[5], scale[0], scale[2]],
+    [scale[4], scale[6], scale[1], scale[3]],
+    [scale[5], scale[0], scale[2], scale[4]],
+    [scale[6], scale[1], scale[3], scale[5]]
+  ]
+  return arr.map((item, key )=> 
+      <div>
+        <ul key={key}>{item.join(' - ')}</ul>
+      </div>
+  )
 }
 
 class App extends Component {
@@ -49,8 +70,7 @@ class App extends Component {
 
     //scales
     const major = [r, w, w, h, w, w, w, h];
-    // const minor = [r, w, h, w, w, h, w, w] 
-    // const melodicMinor = [r, w, h, w, w, w, w, h]
+    const melodicMinor = ['1', '2', 'b3', '4', '5', '6', '7']
     // const harmonicMinor = [r, w, h, w, w, h, wh, h]
 
     // let triads = filtered.map((item, index) => {
@@ -93,7 +113,7 @@ class App extends Component {
         arr.splice(arr.indexOf(num3), 1, num4)
       } 
     }
-    
+
     const modeGenerator = (scale) => {
       let arr = []
       for (let i = 1; i < scale.length; i++) {
@@ -110,26 +130,26 @@ class App extends Component {
             arr.push(i)
           }
         }
-
-
+        
         const filtered = filteredMode(arr)
-
-
         renameLocrian(filtered, 'b3', '4', '#4', 'b5')
         renameEquivalents(filtered, '4', '#4', '5');
         renameEquivalents(filtered, 'b3', '3', '2');
         renameEquivalents(filtered, '6', 'b6', '5');
-        
-
 
         return (
           <div key={key}>
             <ol>{filtered.join(' - ')}</ol>
-            <ol>{triads(filtered)}</ol>
+            <h3>Triads</h3>
+            <p>{triads(filtered)}</p>
+            <h3>Sevenths</h3>
+            <p>{sevenths(filtered)}</p>
+
           </div>
         )
       })
     }
+
     let majorModes = modeGenerator(major)
     console.log(majorModes)
     
@@ -149,13 +169,13 @@ class App extends Component {
             <h1>Minor Modes:</h1>
             {modeGenerator(minor)}
 
-          </div>
-          <div>
+          </div> */}
+          {/* <div>
             <h1>Melodic Minor Modes:</h1>
-            {modeGenerator(melodicMinor)}
+            {modeGenerator2(melodicMinor)}
 
-          </div>
-          <div>
+          </div> */}
+          {/* <div>
             <h1>Harmonic Minor Modes:</h1>
             {modeGenerator(harmonicMinor)}
 
