@@ -23,11 +23,11 @@ class App extends Component {
       9: "6",
       10: "b7",
       11: "7",
-      12: "8",
     };
 
     
-    let chromaticKeys = Object.keys(chromatic)
+    
+    let keys = Object.keys(chromatic)
 
     // return the scale based on tones
     // ex from 1 to 3 is a whole tone.
@@ -44,6 +44,9 @@ class App extends Component {
     const harmonicMinor = [root, whole, half, whole, whole, half, wholeHalf, half]
 
     
+    // Scales are constructed from 12 steps. 
+      //Starting at the root (0), then up half (1), whole (2), and whole half (3) steps.
+    // Reduce those into a scale by iteratively adding each step to a new array.
     // create a function that stores the result each consecutive array item added together.
     // ex [0,2,2,1] => [0,2,3,5]
     
@@ -59,29 +62,42 @@ class App extends Component {
       return arr
     }
 
-    // where the keys of chromaticIntervals match the values of 
-    // create an array with values in chromaticIntervals
-    //turn the scale degrees to chromatic values
-    var filteredScale = (scale) => {
-      let reducedScale = reduceScale(scale)
-      let arr = []
-      //from 0 - 12
-      for (let i = 0; i < chromaticKeys.length; i++) {
-        //from start of reduced scale < end
-        for(let j = 0; j < reducedScale.length; j++) {
-          if (i === reducedScale[j]) {
-            arr.push(chromatic[i])
-          }
-        }
-      }
-      return arr
-    }
+    // // where the keys of chromaticIntervals match the values of 
+    // // create an array with values in chromaticIntervals
+    // //turn the scale degrees to chromatic values
+    // // reduce tones 
+    // const filteredScale = (scale) => {
+    //   let reducedScale = reduceScale(scale)
+    //   let arr = []
+    //   //from 0 - 12
+    //   for (let i = 0; i < keys.length; i++) {
+    //     //from start of reduced scale < end
+    //     for(let j = 0; j < reducedScale.length; j++) {
+    //       if (i === reducedScale[j]) {
+    //         arr.push(chromatic[i])
+    //       }
+    //     }
+    //   }
+    //   return arr
+    // }
 
-    var filteredMode = (mode) => {
+    // const filteredMode = (mode) => {
+    //   let reducedMode = reduceScale(mode)
+    //   return keys.map((key) => { 
+    //     reducedMode.forEach((mode) => {
+    //       if (key === reducedMode[mode]) {
+    //         return chromatic(mode)
+    //       } 
+    //     })
+    //   })
+    // }
+
+
+    const filteredMode = (mode) => {
       let reducedMode = reduceScale(mode)
       let arr = []
       //from 0 - 12
-      for (let i = 0; i < chromaticKeys.length; i++) {
+      for (let i = 0; i < keys.length; i++) {
         //from start of reduced scale < end
         for(let j = 0; j < reducedMode.length; j++) {
           if (i === reducedMode[j]) {
@@ -109,16 +125,18 @@ class App extends Component {
             arr.push(i)
           }
         }
-        var filtered = filteredMode(arr)
-          if(filtered.includes('4') && filtered.includes('#4')) {
-            filtered.splice(filtered.indexOf('#4'), 1, '5')
+
+        const renameEquivalents = (arr, num1, num2, num3) => {
+          if (arr.includes(num1) && arr.includes(num2)) {        arr.splice(arr.indexOf(num2), 1, num3)
           } 
-          if(filtered.includes('b3') && filtered.includes('3')) {
-            filtered.splice(filtered.indexOf('b3'), 1, '2')
-          }         
-          if(filtered.includes('b6') && filtered.includes('6')) {
-            filtered.splice(filtered.indexOf('b6'), 1, '5')
-          }
+        }
+
+        const filtered = filteredMode(arr)
+        
+        renameEquivalents(filtered, '4', '#4', '5');
+        renameEquivalents(filtered, 'b3', '3', '2');
+        renameEquivalents(filtered, '6', 'b6', '5');
+        
         return (
           <div key={key}>
             <ol>{filtered.join(' - ')}</ol>
