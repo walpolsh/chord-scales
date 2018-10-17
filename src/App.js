@@ -11,7 +11,7 @@ class App extends Component {
     
     //create the intervals
     const chromatic = {
-      0: "1",
+      0: "Root",
       1: "b2",
       2: "2",
       3: "b3",
@@ -24,77 +24,39 @@ class App extends Component {
       10: "b7",
       11: "7",
     };
-
-    
     
     let keys = Object.keys(chromatic)
 
-    // return the scale based on tones
-    // ex from 1 to 3 is a whole tone.
-    // from 2 to 4 is a whole half tone. ect.
-    // from 6 to 7 is a half tones
-    
-    const wholeHalf = 3
-    const whole = 2
-    const half = 1
+    //steps
     const root = 0
+    const half = 1
+    const whole = 2
+    const wholeHalf = 3
+
+    //scales
     const major = [root, whole, whole, half, whole, whole, whole, half];
     const minor = [root, whole, half, whole, whole, half, whole, whole] 
     const melodicMinor = [root, whole, half, whole, whole, whole, whole, half]
     const harmonicMinor = [root, whole, half, whole, whole, half, wholeHalf, half]
 
     
-    // Scales are constructed from 12 steps. 
-      //Starting at the root (0), then up half (1), whole (2), and whole half (3) steps.
+    // Create a global counter 
     // Reduce those into a scale by iteratively adding each step to a new array.
-    // create a function that stores the result each consecutive array item added together.
-    // ex [0,2,2,1] => [0,2,3,5]
-    
-    const reduceScale = (scale) => {
-      let arr = [] 
-      let result = 0; //result of each addition
-      for (let i = 0; i <= scale.length - 1; i++) {
-        //add current index, to previous index until last item
-        result += (scale[i])
-        //push result
-        arr.push(result)
-      }
-      return arr
+    // ex mapScale(major) === [0,2,2,1,2,2,2,1] => [0,2,3,5,7,9,10,12]
+    const mapScale = (scale) => {
+      let counter = 0; 
+      return scale.map((i) => {
+        counter += i
+        return counter
+      })
+
     }
-
-    // // where the keys of chromaticIntervals match the values of 
-    // // create an array with values in chromaticIntervals
-    // //turn the scale degrees to chromatic values
-    // // reduce tones 
-    // const filteredScale = (scale) => {
-    //   let reducedScale = reduceScale(scale)
-    //   let arr = []
-    //   //from 0 - 12
-    //   for (let i = 0; i < keys.length; i++) {
-    //     //from start of reduced scale < end
-    //     for(let j = 0; j < reducedScale.length; j++) {
-    //       if (i === reducedScale[j]) {
-    //         arr.push(chromatic[i])
-    //       }
-    //     }
-    //   }
-    //   return arr
-    // }
-
-    // const filteredMode = (mode) => {
-    //   let reducedMode = reduceScale(mode)
-    //   return keys.map((key) => { 
-    //     reducedMode.forEach((mode) => {
-    //       if (key === reducedMode[mode]) {
-    //         return chromatic(mode)
-    //       } 
-    //     })
-    //   })
-    // }
-
-
+    
+    //takes a scale, reduces it to key numbers
+    //outputs an array containing 
     const filteredMode = (mode) => {
-      let reducedMode = reduceScale(mode)
+      let reducedMode = mapScale(mode)
+
       let arr = []
       //from 0 - 12
       for (let i = 0; i < keys.length; i++) {
