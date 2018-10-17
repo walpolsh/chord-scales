@@ -1,6 +1,19 @@
 import React, { Component } from 'react';
 import './App.css';
 
+const triads = (scale) => {
+  let arr = [
+    [scale[0], scale[2], scale[4]],
+    [scale[1], scale[3], scale[5]],
+    [scale[2], scale[4], scale[6]],
+    [scale[3], scale[5], scale[0]],
+    [scale[4], scale[6], scale[1]],
+    [scale[5], scale[0], scale[2]],
+    [scale[6], scale[1], scale[3]]
+  ]
+  return arr.join(' - ')
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -11,7 +24,7 @@ class App extends Component {
     
     //create the intervals
     const chromatic = {
-      0: "Root",
+      0: "1",
       1: "b2",
       2: "2",
       3: "b3",
@@ -25,25 +38,26 @@ class App extends Component {
       11: "7",
     };
     
-    let keys = Object.keys(chromatic)
+    let chromaticKeys = Object.keys(chromatic)
+    let chromaticValues = Object.values(chromatic)
 
     //steps
-    const root = 0
-    const half = 1
-    const whole = 2
-    const wholeHalf = 3
+    const r = 0
+    const h = 1
+    const w = 2
+    const wh = 3
 
     //scales
-    const major = [root, whole, whole, half, whole, whole, whole, half];
-    const minor = [root, whole, half, whole, whole, half, whole, whole] 
-    const melodicMinor = [root, whole, half, whole, whole, whole, whole, half]
-    const harmonicMinor = [root, whole, half, whole, whole, half, wholeHalf, half]
+    const major = [r, w, w, h, w, w, w, h];
+    // const minor = [r, w, h, w, w, h, w, w] 
+    // const melodicMinor = [r, w, h, w, w, w, w, h]
+    // const harmonicMinor = [r, w, h, w, w, h, wh, h]
 
-    
-    // Create a global counter 
-    // Reduce those into a scale by iteratively adding each step to a new array.
-    // ex mapScale(major) === [0,2,2,1,2,2,2,1] => [0,2,3,5,7,9,10,12]
-    const mapScale = (scale) => {
+    // let triads = filtered.map((item, index) => {
+    //   return [filtered[index], filtered[index + 2], filtered[index + 4]]
+    // })
+
+    const mapScale = scale => {
       let counter = 0; 
       return scale.map((i) => {
         counter += i
@@ -52,18 +66,16 @@ class App extends Component {
 
     }
     
-    //takes a scale, reduces it to key numbers
-    //outputs an array containing 
-    const filteredMode = (mode) => {
-      let reducedMode = mapScale(mode)
-
+    //take scale, reduce it to key numbers
+    //outputs an array containing different modes
+    
+    const filteredMode = scale => {
+      let reducedMode = mapScale(scale)
       let arr = []
-      //from 0 - 12
-      for (let i = 0; i < keys.length; i++) {
-        //from start of reduced scale < end
+      for (let i = 0; i < chromaticKeys.length; i++) {
         for(let j = 0; j < reducedMode.length; j++) {
           if (i === reducedMode[j]) {
-            arr.push(chromatic[i])
+            arr.push(chromaticValues[i])
           }
         }
       }
@@ -71,9 +83,20 @@ class App extends Component {
     }
     
     // create a function that takes your scale and generates all the modes with an array of the scale with all available starting indexes.
+    const renameEquivalents = (arr, num1, num2, num3) => {
+      if (arr.includes(num1) && arr.includes(num2)) {        arr.splice(arr.indexOf(num2), 1, num3)
+      } 
+    }
+    //edge case
+    const renameLocrian = (arr, num1, num2, num3, num4) => {
+      if (arr.includes(num1) && arr.includes(num2) &&arr.includes(num3)) {        
+        arr.splice(arr.indexOf(num3), 1, num4)
+      } 
+    }
+    
     const modeGenerator = (scale) => {
       let arr = []
-      for (let i = 1; i < scale.length - 1; i++) {
+      for (let i = 1; i < scale.length; i++) {
         let first = scale.slice(0, i)
         let last = scale.slice(i, scale.length)
         arr.push(last.concat(first))
@@ -88,50 +111,41 @@ class App extends Component {
           }
         }
 
-        const renameEquivalents = (arr, num1, num2, num3) => {
-          if (arr.includes(num1) && arr.includes(num2)) {        arr.splice(arr.indexOf(num2), 1, num3)
-          } 
-        }
 
         const filtered = filteredMode(arr)
-        
+
+
+        renameLocrian(filtered, 'b3', '4', '#4', 'b5')
         renameEquivalents(filtered, '4', '#4', '5');
         renameEquivalents(filtered, 'b3', '3', '2');
         renameEquivalents(filtered, '6', 'b6', '5');
         
+
+
         return (
           <div key={key}>
             <ol>{filtered.join(' - ')}</ol>
+            <ol>{triads(filtered)}</ol>
           </div>
         )
       })
-
-      //if dupicate tones then replace tone.
-      //create a function that prints triads
-      //make an array that contains groups of three degrees
-      //add to array by pushing degrees one at a time.
-      
-      // create a function that prints seventh chords
-      
-      
-      
     }
-    
-    let test = modeGenerator(major)    
+    let majorModes = modeGenerator(major)
+    console.log(majorModes)
     
     //should be able to select scale degrees from a 8 input menu.
     return (          
       <div className="App">
         <header className="App-header">
-          <header>
+          <h1>
             Chord Scales
-          </header>
+          </h1>
           <div>
             <h1>Major Modes:</h1>
-            {modeGenerator(major)}
+            {majorModes}
 
           </div>
-          <div>
+          {/* <div>
             <h1>Minor Modes:</h1>
             {modeGenerator(minor)}
 
@@ -145,7 +159,7 @@ class App extends Component {
             <h1>Harmonic Minor Modes:</h1>
             {modeGenerator(harmonicMinor)}
 
-          </div>
+          </div> */}
 
         </header> 
       </div>
